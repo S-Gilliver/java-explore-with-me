@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "hits")

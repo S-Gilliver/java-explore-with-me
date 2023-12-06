@@ -28,7 +28,7 @@ public class StatsController {
 
     private final StatsService statsService;
 
-    private static final String FORMAT = ("yyyy-MM-dd HH:mm:ss");
+    private static final String DATE_TIME_FORMAT = ("yyyy-MM-dd HH:mm:ss");
 
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.OK)
@@ -38,8 +38,8 @@ public class StatsController {
     }
 
     @GetMapping("/stats")
-    public List<ViewStats> getViewStats(@RequestParam @DateTimeFormat(pattern = FORMAT) LocalDateTime start,
-                                        @RequestParam @DateTimeFormat(pattern = FORMAT) LocalDateTime end,
+    public List<ViewStats> getViewStats(@RequestParam @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime start,
+                                        @RequestParam @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime end,
                                         @RequestParam(defaultValue = "") List<String> uris,
                                         @RequestParam(defaultValue = "false") Boolean unique) {
 
