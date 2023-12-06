@@ -1,0 +1,22 @@
+package ru.practicum.ewm.stats.exception;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@Slf4j
+@RestControllerAdvice
+public class ErrorHandler {
+    private static final Logger logger = LoggerFactory.getLogger(ErrorHandler.class);
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse otherExceptionHandler(final BadRequestException e) {
+        logger.error(e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
+    }
+}
