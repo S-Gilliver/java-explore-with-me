@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EventMapper {
@@ -33,27 +32,27 @@ public class EventMapper {
                 .description(newEvent.getDescription())
                 .eventDate(LocalDateTime.parse(newEvent.getEventDate(), FORMAT))
                 .initiator(user)
-                .paid(Objects.requireNonNullElse(newEvent.getPaid(), false))
-                .participantLimit(Objects.requireNonNullElse(newEvent.getParticipantLimit(), 0L))
-                .requestModeration(Objects.requireNonNullElse(newEvent.getRequestModeration(), true))
+                .paid(newEvent.getPaid() != null && newEvent.getPaid())
+                .participantLimit(newEvent.getParticipantLimit() == null ? 0L : newEvent.getParticipantLimit())
+                .requestModeration(newEvent.getRequestModeration() == null || newEvent.getRequestModeration())
                 .title(newEvent.getTitle())
                 .build();
     }
 
     public static Event mapToEventUpdate(Event event, UpdateEventUserRequest userRequest) {
-        event.setAnnotation(Objects.requireNonNullElse(userRequest.getAnnotation(), event.getAnnotation()));
-        event.setDescription(Objects.requireNonNullElse(userRequest.getDescription(), event.getDescription()));
-        event.setEventDate((LocalDateTime) Objects.requireNonNullElse(userRequest.getEventDate(), event.getEventDate()));
-        event.setPaid(Objects.requireNonNullElse(userRequest.getPaid(), event.getPaid()));
-        event.setParticipantLimit(Objects.requireNonNullElse(userRequest.getParticipantLimit(), event.getParticipantLimit()));
-        event.setRequestModeration(Objects.requireNonNullElse(userRequest.getRequestModeration(), event.getRequestModeration()));
-        event.setTitle(Objects.requireNonNullElse(userRequest.getTitle(), event.getTitle()));
+
+        event.setAnnotation(userRequest.getAnnotation() != null ? userRequest.getAnnotation() : event.getAnnotation());
+        event.setDescription(userRequest.getDescription() != null ? userRequest.getDescription() : event.getDescription());
+        event.setEventDate(userRequest.getEventDate() != null ? LocalDateTime.parse(userRequest.getEventDate(), FORMAT) : event.getEventDate());
+        event.setPaid(userRequest.getPaid() != null ? userRequest.getPaid() : event.getPaid());
+        event.setParticipantLimit(userRequest.getParticipantLimit() != null ? userRequest.getParticipantLimit() : event.getParticipantLimit());
+        event.setRequestModeration(userRequest.getRequestModeration() != null ? userRequest.getRequestModeration() : event.getRequestModeration());
+        event.setTitle(userRequest.getTitle() != null ? userRequest.getTitle() : event.getTitle());
         event.setViews(event.getViews());
 
         if (userRequest.getStateAction() == null) {
             return event;
         }
-
         switch (StateAction.valueOf(userRequest.getStateAction())) {
             case CANCEL_REVIEW:
                 event.setState(State.CANCELED);
@@ -69,12 +68,7 @@ public class EventMapper {
                 event.setState(State.CANCELED);
                 break;
         }
-
         return event;
-    }
-
-    private static String formatDate(LocalDateTime dateTime) {
-        return dateTime.format(FORMAT);
     }
 
     public static EventFullDto mapToEventFullDto(Event event) {
@@ -83,14 +77,14 @@ public class EventMapper {
                 .annotation(event.getAnnotation())
                 .category(CategoryMapper.mapToCategoryDto(event.getCategory()))
                 .confirmedRequests(event.getConfirmedRequests())
-                .createdOn(formatDate(event.getCreatedOn()))
+                .createdOn(event.getCreatedOn().format(FORMAT))
                 .description(event.getDescription())
-                .eventDate(formatDate(event.getEventDate()))
+                .eventDate(event.getEventDate().format(FORMAT))
                 .initiator(UserMapper.mapToUserShortDto(event.getInitiator()))
                 .location(LocationMapper.mapToLocation(event.getLocationModel()))
                 .paid(event.getPaid())
                 .participantLimit(event.getParticipantLimit())
-                .publishedOn(event.getPublishedOn() != null ? formatDate(event.getPublishedOn()) : null)
+                .publishedOn(event.getPublishedOn() != null ? event.getPublishedOn().format(FORMAT) : null)
                 .requestModeration(event.getRequestModeration())
                 .state(String.valueOf(event.getState()))
                 .title(event.getTitle())
@@ -110,7 +104,7 @@ public class EventMapper {
                 .annotation(event.getAnnotation())
                 .category(CategoryMapper.mapToCategoryDto(event.getCategory()))
                 .confirmedRequests(event.getConfirmedRequests())
-                .eventDate(formatDate(event.getEventDate()))
+                .eventDate(event.getEventDate().format(FORMAT))
                 .initiator(UserMapper.mapToUserShortDto(event.getInitiator()))
                 .paid(event.getPaid())
                 .title(event.getTitle())
