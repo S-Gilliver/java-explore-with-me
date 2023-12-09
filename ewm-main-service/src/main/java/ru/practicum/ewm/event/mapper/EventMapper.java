@@ -40,7 +40,6 @@ public class EventMapper {
     }
 
     public static Event mapToEventUpdate(Event event, UpdateEventUserRequest userRequest) {
-
         event.setAnnotation(userRequest.getAnnotation() != null ? userRequest.getAnnotation() : event.getAnnotation());
         event.setDescription(userRequest.getDescription() != null ? userRequest.getDescription() : event.getDescription());
         event.setEventDate(userRequest.getEventDate() != null ? LocalDateTime.parse(userRequest.getEventDate(), FORMAT) : event.getEventDate());
@@ -49,24 +48,21 @@ public class EventMapper {
         event.setRequestModeration(userRequest.getRequestModeration() != null ? userRequest.getRequestModeration() : event.getRequestModeration());
         event.setTitle(userRequest.getTitle() != null ? userRequest.getTitle() : event.getTitle());
         event.setViews(event.getViews());
-
         if (userRequest.getStateAction() == null) {
             return event;
         }
-        switch (StateAction.valueOf(userRequest.getStateAction())) {
-            case CANCEL_REVIEW:
-                event.setState(State.CANCELED);
-                break;
-            case SEND_TO_REVIEW:
-                event.setState(State.PENDING);
-                break;
-            case PUBLISH_EVENT:
-                event.setState(State.PUBLISHED);
-                event.setPublishedOn(LocalDateTime.now());
-                break;
-            case REJECT_EVENT:
-                event.setState(State.CANCELED);
-                break;
+        if (userRequest.getStateAction().equals(String.valueOf(StateAction.CANCEL_REVIEW))) {
+            event.setState(State.CANCELED);
+        }
+        if (userRequest.getStateAction().equals(String.valueOf(StateAction.SEND_TO_REVIEW))) {
+            event.setState(State.PENDING);
+        }
+        if (userRequest.getStateAction().equals(String.valueOf(StateAction.PUBLISH_EVENT))) {
+            event.setState(State.PUBLISHED);
+            event.setPublishedOn(LocalDateTime.now());
+        }
+        if (userRequest.getStateAction().equals(String.valueOf(StateAction.REJECT_EVENT))) {
+            event.setState(State.CANCELED);
         }
         return event;
     }
@@ -113,6 +109,7 @@ public class EventMapper {
     }
 
     public static List<EventShortDto> mapToEventsShortDto(List<Event> events) {
+
         return events.stream()
                 .map(EventMapper::matToEventShortDto)
                 .collect(Collectors.toList());
