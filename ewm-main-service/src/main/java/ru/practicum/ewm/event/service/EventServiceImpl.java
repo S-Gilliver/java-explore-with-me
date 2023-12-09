@@ -480,7 +480,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private void validateParticipantLimit(Long participantLimit, Long confirmedRequest) {
-        if (participantLimit > 0 && confirmedRequest.equals(participantLimit)) {
+        if (participantLimit > 0 && confirmedRequest == (participantLimit)) {
             throw new ConflictException("Event participant limit reached");
         }
     }
