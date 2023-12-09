@@ -99,7 +99,7 @@ public class EventServiceImpl implements EventService {
             eventDateValidation(LocalDateTime.parse(userRequest.getEventDate(), FORMAT), 2);
         }
         Event eventOld = getEventByIdForService(eventId);
-        if (userId != eventOld.getInitiator().getId()) {
+        if (!userId.equals(eventOld.getInitiator().getId())) {
             throw new ConflictException("Event not created by this user");
         }
         if (eventOld.getState().equals(State.PUBLISHED)) {
@@ -147,13 +147,13 @@ public class EventServiceImpl implements EventService {
     }
 
     private void validateUserAndEvent(Long userId, Event event) {
-        if (userId != event.getInitiator().getId()) {
+        if (!userId.equals(event.getInitiator().getId())) {
             throw new ConflictException("Event not created by this user");
         }
     }
 
     private void validateParticipantLimit(Long participantLimit, Long confirmedRequest) {
-        if (participantLimit > 0 && confirmedRequest == participantLimit) {
+        if (participantLimit > 0 && confirmedRequest.equals(participantLimit)) {
             throw new ConflictException("Event participant limit reached");
         }
     }
@@ -483,7 +483,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private void validateEventOwner(Long userId, Event event) {
-        if (userId != event.getInitiator().getId()) {
+        if (!userId.equals(event.getInitiator().getId())) {
             throw new BadRequestException("Event not created by this user");
         }
     }
