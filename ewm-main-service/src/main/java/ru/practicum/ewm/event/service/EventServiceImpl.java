@@ -78,9 +78,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto createEvent(Long userId, NewEventDto newEvent) {
-
         eventDateValidation(LocalDateTime.parse(newEvent.getEventDate(), FORMAT), 2);
-
         LocationModel locationModel = locationRepository.save(LocationMapper.mapToLocationModel(newEvent.getLocation()));
         Category category = categoryService.getCategoryByIdForService(newEvent.getCategory());
         User user = userService.getUserByIdForService(userId);
@@ -88,13 +86,11 @@ public class EventServiceImpl implements EventService {
         Event event = EventMapper.mapToNewEvent(newEvent, category, user);
         event.setLocationModel(locationModel);
         event.setState(State.PENDING);
-
         return EventMapper.mapToEventFullDto(eventRepository.save(event));
     }
 
     @Override
     public EventFullDto updateEventByOwnerId(Long userId, Long eventId, UpdateEventUserRequest userRequest) {
-
         if (userRequest.getEventDate() != null) {
             eventDateValidation(LocalDateTime.parse(userRequest.getEventDate(), FORMAT), 2);
         }
@@ -106,7 +102,6 @@ public class EventServiceImpl implements EventService {
             throw new ConflictException("Event published");
         }
         Event eventUpdate = eventUpdateByUserAndByAdmin(eventOld, userRequest);
-
         return EventMapper.mapToEventFullDto(eventRepository.save(eventUpdate));
     }
 
@@ -119,15 +114,12 @@ public class EventServiceImpl implements EventService {
         Long confirmedRequest = event.getConfirmedRequests();
 
         validateParticipantLimit(participantLimit, confirmedRequest);
-
         if (statusRequest.getStatus().equals(String.valueOf(Status.REJECTED))) {
             updateStatusByIds(eventId, statusRequest.getRequestIds(), Status.REJECTED);
         }
-
         if (participantLimit == 0) {
             updateStatusByIds(eventId, statusRequest.getRequestIds(), Status.CONFIRMED);
         }
-
         if (participantLimit > 0) {
             processPendingRequests(eventId, statusRequest.getRequestIds(), participantLimit, confirmedRequest);
         }
@@ -146,19 +138,7 @@ public class EventServiceImpl implements EventService {
                 .build();
     }
 
-    private void validateUserAndEvent(Long userId, Event event) {
-        if (!userId.equals(event.getInitiator().getId())) {
-            throw new ConflictException("Event not created by this user");
-        }
-    }
-
-    private void validateParticipantLimit(Long participantLimit, Long confirmedRequest) {
-        if (participantLimit > 0 && confirmedRequest.equals(participantLimit)) {
-            throw new ConflictException("Event participant limit reached");
-        }
-    }
-
-    private void processPendingRequests(Long eventId, List<Long> requestIds, long participantLimit, long confirmedRequest) {
+    private void processPendingRequests(Long eventId, List<Long> requestIds, Long participantLimit, Long confirmedRequest) {
         List<ParticipationRequest> requestsPendingForUpdate = participationRequestRepository.findByEventIdAndStatusAndId(eventId,
                 String.valueOf(Status.PENDING), requestIds);
         List<ParticipationRequest> requestForRejected = new ArrayList<>();
@@ -170,8 +150,7 @@ public class EventServiceImpl implements EventService {
                 confirmedRequest++;
             }
         }
-
-        if (confirmedRequest == participantLimit) {
+        if (confirmedRequest.equals(participantLimit)) {
             for (ParticipationRequest request : requestForRejected) {
                 participationRequestRepository.save(updateStatus(request, Status.REJECTED));
             }
@@ -491,6 +470,18 @@ public class EventServiceImpl implements EventService {
     private void validateEventPendingStatus(Event event) {
         if (!event.getState().equals(State.PENDING)) {
             throw new ConflictException("Event not in pending status");
+        }
+    }
+
+    private void validateUserAndEvent(Long userId, Event event) {
+        if (!userId.equals(event.getInitiator().getId())) {
+            throw new ConflictException("Event not created by this user");
+        }
+    }
+
+    private void validateParticipantLimit(Long participantLimit, Long confirmedRequest) {
+        if (participantLimit > 0 && confirmedRequest.equals(participantLimit)) {
+            throw new ConflictException("Event participant limit reached");
         }
     }
 }
