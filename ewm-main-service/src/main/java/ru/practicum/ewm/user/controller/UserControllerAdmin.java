@@ -19,8 +19,6 @@ import ru.practicum.ewm.user.service.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Validated
@@ -41,8 +39,8 @@ public class UserControllerAdmin {
 
     @GetMapping()
     public List<UserDto> getUsers(@RequestParam(defaultValue = "") List<Long> ids,
-                                  @Min(0) @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                  @Min(0) @RequestParam(defaultValue = "10") @Positive int size) {
+                                  @Min(0) @RequestParam(defaultValue = "0") int from,
+                                  @Min(0) @RequestParam(defaultValue = "10") int size) {
         log.info("GET users");
         return userService.getUsers(ids, from, size);
     }

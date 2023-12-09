@@ -17,8 +17,6 @@ import ru.practicum.ewm.event.service.EventService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -46,8 +44,8 @@ public class EventControllerAdmin {
                                                @RequestParam(defaultValue = "") List<Long> categories,
                                                @RequestParam(defaultValue = "") @DateTimeFormat(pattern = FORMAT_TO_DATE) LocalDateTime rangeStart,
                                                @RequestParam(defaultValue = "") @DateTimeFormat(pattern = FORMAT_TO_DATE) LocalDateTime rangeEnd,
-                                               @Min(0) @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                               @Min(0) @RequestParam(defaultValue = "10") @Positive int size) {
+                                               @Min(0) @RequestParam(defaultValue = "0") int from,
+                                               @Min(0) @RequestParam(defaultValue = "10") int size) {
         log.info("GET events by admin with params {}, {}, {}, {}, {}, {}, {}", users, states, categories, rangeStart, rangeEnd, from, size);
         return eventService.getEventsByAdmin(users, states, categories, rangeStart, rangeEnd, from, size);
     }

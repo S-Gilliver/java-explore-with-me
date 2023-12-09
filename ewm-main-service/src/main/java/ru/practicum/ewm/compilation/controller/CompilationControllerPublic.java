@@ -12,8 +12,6 @@ import ru.practicum.ewm.compilation.dto.CompilationDto;
 import ru.practicum.ewm.compilation.service.CompilationService;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Validated
@@ -27,8 +25,8 @@ public class CompilationControllerPublic {
 
     @GetMapping
     public List<CompilationDto> getCompilations(@RequestParam(defaultValue = "false") Boolean pinned,
-                                                @Min(0) @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                                @Min(0) @RequestParam(defaultValue = "10") @Positive int size) {
+                                                @Min(0) @RequestParam(defaultValue = "0") int from,
+                                                @Min(0) @RequestParam(defaultValue = "10") int size) {
         log.info("GET api with params: pinned = {}, from = {}, size = {}", pinned, from, size);
         return compilationService.getCompilations(pinned, from, size);
     }
