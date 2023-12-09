@@ -110,6 +110,10 @@ public class EventServiceImpl implements EventService {
         Event event = getEventByIdForService(eventId);
         validateUserAndEvent(userId, event);
 
+        if (Objects.equals(event.getParticipantLimit(), event.getConfirmedRequests())) {
+            throw new ConflictException("Event participant limit reached");
+        }
+
         Long participantLimit = event.getParticipantLimit();
         Long confirmedRequest = event.getConfirmedRequests();
 
