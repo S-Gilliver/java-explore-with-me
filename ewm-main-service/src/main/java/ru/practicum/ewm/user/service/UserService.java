@@ -1,5 +1,6 @@
 package ru.practicum.ewm.user.service;
 
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.ewm.user.dto.NewUserRequest;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.model.User;
@@ -10,7 +11,7 @@ public interface UserService {
 
     UserDto createUser(NewUserRequest newUser);
 
-    List<UserDto> getUsers(List<Long> ids, int from, int size);
+    List<UserDto> getUsers(List<Long> ids, PageRequest page);
 
     void removeUserById(Long userId);
 

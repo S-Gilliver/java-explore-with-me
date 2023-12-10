@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.Positive;
-
 @Getter
 @Setter
 @Builder
@@ -19,10 +17,8 @@ public class ParticipationRequestDto {
 
     private String created;
 
-    @Positive
     private Long event;
 
-    @Positive
     private Long requester;
 
     private String status;

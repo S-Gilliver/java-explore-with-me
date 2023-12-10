@@ -2,6 +2,7 @@ package ru.practicum.ewm.user.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,8 +42,9 @@ public class UserControllerAdmin {
     public List<UserDto> getUsers(@RequestParam(defaultValue = "") List<Long> ids,
                                   @Min(0) @RequestParam(defaultValue = "0") int from,
                                   @Min(0) @RequestParam(defaultValue = "10") int size) {
+        PageRequest page = PageRequest.of(from / size, size);
         log.info("GET users");
-        return userService.getUsers(ids, from, size);
+        return userService.getUsers(ids, page);
     }
 
     @DeleteMapping("/{userId}")

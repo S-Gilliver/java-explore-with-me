@@ -26,29 +26,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsers(List<Long> ids, int from, int size) {
-        PageRequest page = PageRequest.of(from / size, size);
-
+    public List<UserDto> getUsers(List<Long> ids, PageRequest page) {
         if (ids.isEmpty()) {
             return UserMapper.mapToUsersDto(userRepository.findAllWithPage(page));
         }
         return UserMapper.mapToUsersDto(userRepository.findByUsersIdWithPage(ids, page));
-
     }
 
     @Override
     public void removeUserById(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("User with Id =" + userId + " does not exist");
-        }
+        validateUserExists(userId);
         userRepository.deleteById(userId);
     }
 
     @Override
     public User getUserByIdForService(Long userId) {
+        validateUserExists(userId);
+        return userRepository.findById(userId).get();
+    }
+
+    private void validateUserExists(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("User with Id =" + userId + " does not exist");
         }
-        return userRepository.findById(userId).get();
     }
+
 }
