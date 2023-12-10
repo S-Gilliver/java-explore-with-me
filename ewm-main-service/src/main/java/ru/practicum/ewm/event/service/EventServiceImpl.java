@@ -471,13 +471,13 @@ public class EventServiceImpl implements EventService {
     }
 
     private void validateUserAndEvent(Long userId, Event event) {
-        if (userId != (event.getInitiator().getId())) {
+        if (!userId.equals(event.getInitiator().getId())) {
             throw new ConflictException("Event not created by this user");
         }
     }
 
     private void validateParticipantLimit(Long participantLimit, Long confirmedRequest) {
-        if (participantLimit > 0 && confirmedRequest == (participantLimit)) {
+        if (participantLimit > 0 && confirmedRequest.equals(participantLimit)) {
             throw new ConflictException("Event participant limit reached");
         }
     }
