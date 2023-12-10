@@ -113,6 +113,15 @@ public class EventServiceImpl implements EventService {
         Long participantLimit = event.getParticipantLimit();
         Long confirmedRequest = event.getConfirmedRequests();
 
+        if (participantLimit == null) {
+            throw new ConflictException("Event participant limit reached");
+        }
+
+        // Check if the limit is less than the number of confirmed participants
+        if (participantLimit < confirmedRequest) {
+            throw new ConflictException("Event participant limit reached");
+        }
+
         validateParticipantLimit(participantLimit, confirmedRequest);
         if (statusRequest.getStatus().equals(String.valueOf(Status.REJECTED))) {
             updateStatusByIds(eventId, statusRequest.getRequestIds(), Status.REJECTED);
