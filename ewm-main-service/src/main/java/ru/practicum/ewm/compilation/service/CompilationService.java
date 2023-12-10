@@ -1,5 +1,6 @@
 package ru.practicum.ewm.compilation.service;
 
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.ewm.compilation.dto.CompilationDto;
 import ru.practicum.ewm.compilation.dto.NewCompilationDto;
 import ru.practicum.ewm.compilation.dto.UpdateCompilationRequest;
@@ -14,7 +15,7 @@ public interface CompilationService {
 
     void removeCompilationById(Long compId);
 
-    List<CompilationDto> getCompilations(Boolean pinned, int from, int size);
+    List<CompilationDto> getCompilations(Boolean pinned, PageRequest page);
 
     CompilationDto getCompilationById(Long compId);
 }

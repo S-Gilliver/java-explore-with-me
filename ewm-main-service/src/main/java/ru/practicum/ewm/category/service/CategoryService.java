@@ -1,5 +1,6 @@
 package ru.practicum.ewm.category.service;
 
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.model.Category;
 
@@ -13,7 +14,7 @@ public interface CategoryService {
 
     CategoryDto updateCategory(Long catId, CategoryDto categoryDto);
 
-    List<CategoryDto> getCategories(int from, int size);
+    List<CategoryDto> getCategories(PageRequest page);
 
     CategoryDto getCategoryDtoById(Long catId);
 

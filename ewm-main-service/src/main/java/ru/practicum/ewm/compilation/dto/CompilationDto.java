@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.ewm.event.dto.EventShortDto;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
@@ -17,14 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 public class CompilationDto {
 
-    @NotNull
     private Long id;
 
     private List<EventShortDto> events;
 
-    @NotNull
     private Boolean pinned;
 
-    @NotNull
     private String title;
 }

@@ -70,8 +70,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    public List<CompilationDto> getCompilations(Boolean pinned, int from, int size) {
-        PageRequest page = PageRequest.of(from / size, size);
+    public List<CompilationDto> getCompilations(Boolean pinned, PageRequest page) {
         List<Compilation> compilations = compilationRepository.findByPinned(pinned, page);
 
         List<CompilationDto> compilationsDto = new ArrayList<>();
