@@ -234,11 +234,8 @@ public class EventServiceImpl implements EventService {
             return EventMapper.mapToEventsFullDto(events.getContent());
         }
 
-        Specification<Event> combinedSpecification = specifications.stream()
-                .reduce(Specification::and)
-                .orElseThrow(() -> new BadRequestException("The request was formed incorrectly"));
-
-        Page<Event> events = eventRepository.findAll(combinedSpecification, page);
+        Page<Event> events = eventRepository.findAll(specifications.stream().reduce(Specification::and)
+                .orElseThrow(() -> new BadRequestException("The request was formed incorrectly")), page);
         return EventMapper.mapToEventsFullDto(events.getContent());
     }
 
