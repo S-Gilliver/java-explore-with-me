@@ -46,7 +46,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         if (!event.getState().equals(State.PUBLISHED)) {
             throw new ConflictException("Event not published");
         }
-        if (event.getParticipantLimit() != 0 && event.getParticipantLimit() == event.getConfirmedRequests()) {
+        if (event.getParticipantLimit() != 0 && event.getParticipantLimit().equals(event.getConfirmedRequests())) {
             throw new ConflictException("Event participant limit reached");
         }
         ParticipationRequest request = new ParticipationRequest();
