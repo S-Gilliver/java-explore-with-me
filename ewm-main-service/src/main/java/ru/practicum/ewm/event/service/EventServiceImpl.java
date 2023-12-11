@@ -11,7 +11,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.service.CategoryService;
-import ru.practicum.ewm.client.stats.HitClient;
 import ru.practicum.ewm.client.stats.StatsClient;
 import ru.practicum.ewm.dto.stats.ViewStats;
 import ru.practicum.ewm.event.dto.EventFullDto;
@@ -63,9 +62,9 @@ public class EventServiceImpl implements EventService {
     public final EventRepository eventRepository;
 
     public final CategoryService categoryService;
-   
+    
     public final UserService userService;
-
+    
     public final LocationRepository locationRepository;
 
     public final ParticipationRequestRepository participationRequestRepository;
