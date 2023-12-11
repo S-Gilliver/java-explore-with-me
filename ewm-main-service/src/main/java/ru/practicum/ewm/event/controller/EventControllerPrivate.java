@@ -2,6 +2,7 @@ package ru.practicum.ewm.event.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,8 +67,9 @@ public class EventControllerPrivate {
     public List<EventShortDto> getEventsByOwnerId(@PathVariable Long userId,
                                                   @Min(0) @RequestParam(defaultValue = "0") int from,
                                                   @Min(0) @RequestParam(defaultValue = "10") int size) {
+        PageRequest page = PageRequest.of(from / size, size);
         log.info("GET events by owner for private");
-        return eventService.getEventsByOwnerId(userId, from, size);
+        return eventService.getEventsByOwnerId(userId, page);
     }
 
     @GetMapping("/{eventId}")

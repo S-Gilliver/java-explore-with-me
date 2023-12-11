@@ -1,8 +1,11 @@
 package ru.practicum.ewm.event.service;
 
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
+import ru.practicum.ewm.event.dto.SearchFilterAdmin;
+import ru.practicum.ewm.event.dto.SearchFilterPublic;
 import ru.practicum.ewm.event.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.event.dto.UpdateEventUserRequest;
 import ru.practicum.ewm.event.model.Event;
@@ -10,8 +13,6 @@ import ru.practicum.ewm.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.request.dto.ParticipationRequestDto;
 
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
@@ -23,7 +24,7 @@ public interface EventService {
     EventRequestStatusUpdateResult updateStatusRequestByOwnerId(Long userId,
                                                                 Long eventId, EventRequestStatusUpdateRequest statusRequest);
 
-    List<EventShortDto> getEventsByOwnerId(Long userId, int from, int size);
+    List<EventShortDto> getEventsByOwnerId(Long userId, PageRequest page);
 
     EventFullDto getEventByOwnerId(Long userId, Long eventId);
 
@@ -31,24 +32,11 @@ public interface EventService {
 
     EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequest adminRequest);
 
-    List<EventFullDto> getEventsByAdmin(List<Long> users,
-                                        List<String> states,
-                                        List<Long> categories,
-                                        LocalDateTime rangeStart,
-                                        LocalDateTime rangeEnd,
-                                        Integer from,
-                                        Integer size);
+    List<EventFullDto> getEventsByAdmin(SearchFilterAdmin filterAdmin, PageRequest page);
 
-    List<EventShortDto> getEventsPublic(String text,
-                                        List<Long> categories, Boolean paid,
-                                        LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                        Boolean onlyAvailable,
-                                        String sort,
-                                        int from,
-                                        int size,
-                                        HttpServletRequest request);
+    List<EventShortDto> getEventsPublic(SearchFilterPublic filterPublic);
 
-    EventFullDto getEventByIdPublic(Long id, HttpServletRequest request);
+    EventFullDto getEventByIdPublic(Long id);
 
     Event getEventByIdForService(Long eventId);
 }

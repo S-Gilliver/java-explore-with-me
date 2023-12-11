@@ -2,6 +2,7 @@ package ru.practicum.ewm.event.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.event.dto.EventFullDto;
+import ru.practicum.ewm.event.dto.SearchFilterAdmin;
 import ru.practicum.ewm.event.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.event.service.EventService;
 
@@ -33,7 +35,7 @@ public class EventControllerAdmin {
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEventByAdmin(@PathVariable Long eventId,
-                                           @RequestBody @Valid UpdateEventAdminRequest adminRequest) {
+                                           @Valid @RequestBody UpdateEventAdminRequest adminRequest) {
         log.info("PATCH event by admin");
         return eventService.updateEventByAdmin(eventId, adminRequest);
     }
@@ -46,7 +48,15 @@ public class EventControllerAdmin {
                                                @RequestParam(defaultValue = "") @DateTimeFormat(pattern = FORMAT_TO_DATE) LocalDateTime rangeEnd,
                                                @Min(0) @RequestParam(defaultValue = "0") int from,
                                                @Min(0) @RequestParam(defaultValue = "10") int size) {
+        PageRequest page = PageRequest.of(from / size, size);
+        SearchFilterAdmin filterAdmin = SearchFilterAdmin.builder()
+                .users(users)
+                .states(states)
+                .categories(categories)
+                .rangeStart(rangeStart)
+                .rangeEnd(rangeEnd)
+                .build();
         log.info("GET events by admin with params {}, {}, {}, {}, {}, {}, {}", users, states, categories, rangeStart, rangeEnd, from, size);
-        return eventService.getEventsByAdmin(users, states, categories, rangeStart, rangeEnd, from, size);
+        return eventService.getEventsByAdmin(filterAdmin, page);
     }
 }

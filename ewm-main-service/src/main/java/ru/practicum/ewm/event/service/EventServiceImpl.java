@@ -13,7 +13,6 @@ import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.service.CategoryService;
 import ru.practicum.ewm.client.stats.HitClient;
 import ru.practicum.ewm.client.stats.StatsClient;
-import ru.practicum.ewm.dto.stats.EndpointHitDto;
 import ru.practicum.ewm.dto.stats.ViewStats;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
@@ -43,7 +42,6 @@ import ru.practicum.ewm.request.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.service.UserService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -171,8 +169,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventShortDto> getEventsByOwnerId(Long userId, int from, int size) {
-        PageRequest page = PageRequest.of(from / size, size);
+    public List<EventShortDto> getEventsByOwnerId(Long userId, PageRequest page) {
         List<Event> events = eventRepository.findByInitiatorId(userId, page);
         return EventMapper.mapToEventsShortDto(events);
     }
@@ -210,23 +207,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventFullDto> getEventsByAdmin(List<Long> users,
-                                               List<String> states,
-                                               List<Long> categories,
-                                               LocalDateTime rangeStart,
-                                               LocalDateTime rangeEnd,
-                                               Integer from,
-                                               Integer size) {
-
-        PageRequest page = PageRequest.of(from / size, size);
-        SearchFilterAdmin filterAdmin = SearchFilterAdmin.builder()
-                .users(users)
-                .states(states)
-                .categories(categories)
-                .rangeStart(rangeStart)
-                .rangeEnd(rangeEnd)
-                .build();
-
+    public List<EventFullDto> getEventsByAdmin(SearchFilterAdmin filterAdmin, PageRequest page) {
         List<Specification<Event>> specifications = searchFilterAdminToSpecification(filterAdmin);
 
         if (specifications.isEmpty()) {
@@ -240,32 +221,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventShortDto> getEventsPublic(String text,
-                                               List<Long> categories, Boolean paid,
-                                               LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                               Boolean onlyAvailable,
-                                               String sort,
-                                               int from,
-                                               int size,
-                                               HttpServletRequest request) {
-
-        SearchFilterPublic filterPublic = SearchFilterPublic.builder()
-                .text(text)
-                .categories(categories)
-                .paid(paid)
-                .rangeStart(rangeStart)
-                .rangeEnd(rangeEnd)
-                .onlyAvailable(onlyAvailable)
-                .sort(sort)
-                .from(from)
-                .size(size)
-                .build();
-
-        EndpointHitDto endpointHitDto = createEndpointHitDto(request);
-        hitClient.createEndpointHit(endpointHitDto);
-
+    public List<EventShortDto> getEventsPublic(SearchFilterPublic filterPublic) {
         List<Specification<Event>> specifications = searchFilterPublicToSpecification(filterPublic);
-        List<Event> result;
+        List<Event> result = new ArrayList<>();
+        int from = filterPublic.getFrom();
+        int size = filterPublic.getSize();
 
         if (filterPublic.getSort().isEmpty()) {
             result = getEventsWithoutSorting(filterPublic, specifications, from, size);
@@ -277,15 +237,6 @@ public class EventServiceImpl implements EventService {
             throw new BadRequestException("The request was formed incorrectly");
         }
         return EventMapper.mapToEventsShortDto(result);
-    }
-
-    private EndpointHitDto createEndpointHitDto(HttpServletRequest request) {
-        return EndpointHitDto.builder()
-                .app("ewm-main-service")
-                .ip(request.getRemoteAddr())
-                .uri(request.getRequestURI())
-                .timestamp(LocalDateTime.now().format(FORMAT))
-                .build();
     }
 
     private List<Event> getEventsWithoutSorting(SearchFilterPublic filterPublic, List<Specification<Event>> specifications, int from, int size) {
@@ -308,21 +259,16 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventFullDto getEventByIdPublic(Long eventId, HttpServletRequest request) {
-        EndpointHitDto endpointHitDto = createEndpointHitDto(request);
-        hitClient.createEndpointHit(endpointHitDto);
-
+    public EventFullDto getEventByIdPublic(Long eventId) {
         Optional<Event> event = Optional.ofNullable(eventRepository.findByIdAndState(eventId, State.PUBLISHED));
-
         if (event.isEmpty()) {
             throw new NotFoundException("Event with Id =" + eventId + " not found or not available");
         }
-
         Map<String, Object> parameters = createViewStatsParameters(event);
         List<ViewStats> viewStats = statsClient.getViewStats(parameters);
 
         if (!viewStats.isEmpty()) {
-            long hits = viewStats.get(0).getHits();
+            Long hits = viewStats.get(0).getHits();
             event.get().setViews(hits);
         }
 

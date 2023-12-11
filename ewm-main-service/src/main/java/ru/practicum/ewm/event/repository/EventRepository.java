@@ -11,10 +11,10 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
 
-    List<Event> findByInitiatorId(long userId, PageRequest page);
+    List<Event> findByInitiatorId(Long userId, PageRequest page);
 
-    Event findByInitiatorIdAndId(long userId, long eventId);
+    Event findByInitiatorIdAndId(Long userId, Long eventId);
 
     @Query("from Event e where e.id = ?1 and e.state = ?2 ")
-    Event findByIdAndState(long eventId, State state);
+    Event findByIdAndState(Long eventId, State state);
 }

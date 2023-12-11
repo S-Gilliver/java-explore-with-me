@@ -21,7 +21,7 @@ public class EventShortDto {
 
     private CategoryDto category;
 
-    private long confirmedRequests;
+    private Long confirmedRequests;
 
     private String eventDate;
 
