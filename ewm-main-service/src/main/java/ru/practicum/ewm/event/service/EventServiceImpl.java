@@ -63,9 +63,7 @@ public class EventServiceImpl implements EventService {
     public final EventRepository eventRepository;
 
     public final CategoryService categoryService;
-
-    public final HitClient hitClient;
-
+   
     public final UserService userService;
 
     public final LocationRepository locationRepository;
