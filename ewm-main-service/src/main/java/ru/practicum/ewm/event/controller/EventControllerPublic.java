@@ -65,6 +65,7 @@ public class EventControllerPublic {
                 .uri(request.getRequestURI())
                 .timestamp(LocalDateTime.now().format(FORMAT))
                 .build();
+        log.info("Create endpoint");
         hitClient.createEndpointHit(endpointHitDto);
         log.info("Get events for public");
         return eventService.getEventsPublic(filterPublic);
@@ -79,6 +80,7 @@ public class EventControllerPublic {
                 .uri(request.getRequestURI())
                 .timestamp(LocalDateTime.now().format(FORMAT))
                 .build();
+        log.info("Create endpoint");
         hitClient.createEndpointHit(endpointHitDto);
         log.info("GET event by id: {} from ip: {}", id, request.getRemoteAddr());
         return eventService.getEventByIdPublic(id);
