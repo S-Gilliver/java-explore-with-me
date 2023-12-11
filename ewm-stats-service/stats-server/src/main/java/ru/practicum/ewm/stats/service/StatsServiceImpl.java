@@ -34,9 +34,11 @@ public class StatsServiceImpl implements StatsService {
 
         if (unique && !uris.isEmpty()) {
             return statsRepository.findByDateAndUrisAndUnique(start, end, uris);
-        } else if (!unique && !uris.isEmpty()) {
+        }
+        if (!unique && !uris.isEmpty()) {
             return statsRepository.findByDateAndUris(start, end, uris);
-        } else if (unique) {
+        }
+        if (unique) {
             return statsRepository.findByDateAndUnique(start, end);
         } else {
             return statsRepository.findByDate(start, end);
@@ -45,7 +47,6 @@ public class StatsServiceImpl implements StatsService {
 
     private void validateStartBeforeEnd(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
-            log.error("Invalid time range: Start time ({}) is after end time ({})", start, end);
             throw new BadRequestException("Invalid time range: The start time must be before the end time");
         }
     }

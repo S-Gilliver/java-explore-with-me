@@ -17,6 +17,7 @@ import ru.practicum.ewm.dto.stats.ViewStats;
 import ru.practicum.ewm.stats.service.StatsService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @AllArgsConstructor
+@Valid
 public class StatsController {
 
     private final StatsService statsService;
@@ -38,8 +40,8 @@ public class StatsController {
     }
 
     @GetMapping("/stats")
-    public List<ViewStats> getViewStats(@RequestParam @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime start,
-                                        @RequestParam @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime end,
+    public List<ViewStats> getViewStats(@RequestParam @DateTimeFormat(pattern = DATE_TIME_FORMAT) @NotNull LocalDateTime start,
+                                        @RequestParam @DateTimeFormat(pattern = DATE_TIME_FORMAT) @NotNull LocalDateTime end,
                                         @RequestParam(defaultValue = "") List<String> uris,
                                         @RequestParam(defaultValue = "false") Boolean unique) {
 
