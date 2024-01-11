@@ -43,11 +43,13 @@ public class AdminUserController {
                                   @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                   @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("GET users");
-        return adminUserService.getAllUsers(ids, from, size);    }
+        return adminUserService.getAllUsers(ids, from, size);
+    }
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeUserId(@PathVariable @PositiveOrZero int userId) {
         log.info("DELETE user by id {}", userId);
-        adminUserService.deleteUser(userId);    }
+        adminUserService.deleteUser(userId);
+    }
 }
