@@ -85,8 +85,7 @@ public class PublicEventServiceImpl implements PublicEventService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public EventFullDto getEventById(int id) {
 
-        Event eventFromDb = eventRepository.getByIdAndState(id, EventState.PUBLISHED)
-                .orElseThrow(() -> new NotFoundException(String.format("Event with id=%d was not found", id)));
+        Event eventFromDb = eventRepository.getByIdAndState(id, EventState.PUBLISHED).orElseThrow(() -> new NotFoundException(String.format("Event with id=%d was not found", id)));
 
         List<String> uris = List.of("/events/" + id);
         ResponseEntity<Object> responseEntity = statClient.getStat(LocalDateTime.now().minusYears(1000), LocalDateTime.now().plusYears(1000), uris, true);
@@ -99,12 +98,9 @@ public class PublicEventServiceImpl implements PublicEventService {
                 throw new RuntimeException(e);
             }
         }
-        EventFullDto eventFullDto = EventMapper.createEventFullDto(eventFromDb, requestRepository.countRequestByEventIdAndStatus(eventFromDb.getId(), RequestStatus.CONFIRMED));
+        eventFromDb.setViews(hits);
+        return EventMapper.createEventFullDto(eventFromDb, requestRepository.countRequestByEventIdAndStatus(eventFromDb.getId(), RequestStatus.CONFIRMED));
 
-        eventFromDb.setViews(eventFromDb.getViews() + 1);
-
-        return eventFullDto;
     }
-
 }
 
