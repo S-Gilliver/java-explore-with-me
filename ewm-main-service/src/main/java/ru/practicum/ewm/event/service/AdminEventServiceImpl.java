@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.repository.CategoryRepository;
 import ru.practicum.ewm.event.dto.EventFullDto;
-import ru.practicum.ewm.event.dto.EventSearchParams;
 import ru.practicum.ewm.event.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.event.enums.EventState;
 import ru.practicum.ewm.event.enums.ModeratorEventState;
@@ -123,49 +122,44 @@ public class AdminEventServiceImpl implements AdminEventService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public List<EventFullDto> getEvents(EventSearchParams eventSearchParams, PageRequest pageRequest) {
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    public List<EventFullDto> getEvents(List<Integer> usersIds, List<String> states, List<Integer> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, PageRequest pageRequest) {
 
         List<EventState> eventStates = null;
-        if (eventSearchParams.getRangeStart() == null) {
-            eventSearchParams.setRangeStart(LocalDateTime.now());
-            eventSearchParams.setRangeEnd(eventSearchParams.getRangeStart().plusYears(1000));
+        if (rangeStart == null) {
+            rangeStart = LocalDateTime.now();
+            rangeEnd = rangeStart.plusYears(1000);
         }
 
-        if (eventSearchParams.getRangeEnd().isBefore(eventSearchParams.getRangeStart())) {
+        if (rangeEnd.isBefore(rangeStart)) {
             throw new BadRequestException("Invalid time parameters");
         }
 
-        if (eventSearchParams.getUsers() != null && eventSearchParams.getUsers().isEmpty()) {
-            eventSearchParams.setUsers(null);
+        if (usersIds != null && usersIds.isEmpty()) {
+            usersIds = null;
         }
 
-        if (eventSearchParams.getStates() != null && eventSearchParams.getStates().isEmpty()) {
-            eventSearchParams.setStates(null);
+        if (states != null && states.isEmpty()) {
+            states = null;
         }
 
-        if (eventSearchParams.getCategories() != null && eventSearchParams.getCategories().isEmpty()) {
-            eventSearchParams.setCategories(null);
+        if (categories != null && categories.isEmpty()) {
+            categories = null;
         }
 
-        if (eventSearchParams.getStates() != null) {
+        if (states != null) {
             eventStates = new ArrayList<>();
-            for (String state : eventSearchParams.getStates()) {
+            for (String state : states) {
                 if (!EnumUtils.isValidEnum(EventState.class, state)) {
                     throw new BadRequestException("Invalid state: " + state);
                 }
                 eventStates.add(EventState.valueOf(state));
             }
         }
-
-        Page<Event> events = eventRepository.getByUserIdsStatesCategories(eventSearchParams.getUsers(),
-                eventStates, eventSearchParams.getCategories(), eventSearchParams.getRangeStart(),
-                eventSearchParams.getRangeEnd(), pageRequest);
+        Page<Event> events = eventRepository.getByUserIdsStatesCategories(usersIds, eventStates, categories, rangeStart, rangeEnd, pageRequest);
 
         return events.getContent().stream()
-                .map(event -> EventMapper.createEventFullDto(event,
-                        requestRepository.countRequestByEventIdAndStatus(event.getId(),
-                                RequestStatus.CONFIRMED)))
+                .map(event -> EventMapper.createEventFullDto(event, requestRepository.countRequestByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED)))
                 .collect(Collectors.toList());
     }
 }
