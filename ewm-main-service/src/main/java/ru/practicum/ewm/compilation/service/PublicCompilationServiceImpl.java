@@ -23,8 +23,7 @@ public class PublicCompilationServiceImpl implements PublicCompilationService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public List<CompilationDto> getCompilation(boolean pinned, int from, int size) {
-        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
+    public List<CompilationDto> getCompilation(boolean pinned, PageRequest pageRequest) {
         if (pinned) {
             return compilationRepository.getAllByPinned(true, pageRequest).getContent().stream()
                     .map(event -> CompilationMapper.createCompilationDtoWithEventList(event, requestRepository))
@@ -38,7 +37,9 @@ public class PublicCompilationServiceImpl implements PublicCompilationService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public CompilationDto getCompilationById(int compilationId) {
-        Compilation compilation = compilationRepository.findById(compilationId).orElseThrow(() -> new NotFoundException(String.format("Compilation with id=%d was not found", compilationId)));
+        Compilation compilation = compilationRepository.findById(compilationId)
+                .orElseThrow(() -> new NotFoundException(
+                        String.format("Compilation with id=%d was not found", compilationId)));
         return CompilationMapper.createCompilationDtoWithEventList(compilation, requestRepository);
     }
 }

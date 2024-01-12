@@ -21,8 +21,7 @@ public class PublicCategoryServiceImpl implements PublicCategoryService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public List<CategoryDto> getCategories(int from, int size) {
-        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
+    public List<CategoryDto> getCategories(PageRequest pageRequest) {
         return categoryRepository.findAll(pageRequest).getContent().stream()
                 .map(CategoryMapper::createCategoryDto)
                 .collect(Collectors.toList());

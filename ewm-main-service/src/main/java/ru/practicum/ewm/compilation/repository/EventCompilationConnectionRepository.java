@@ -6,5 +6,4 @@ import ru.practicum.ewm.compilation.model.EventCompilationConnection;
 
 @Repository
 public interface EventCompilationConnectionRepository extends JpaRepository<EventCompilationConnection, Integer> {
-
 }

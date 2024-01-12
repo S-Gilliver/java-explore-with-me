@@ -2,6 +2,7 @@ package ru.practicum.ewm.compilation.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +30,8 @@ public class CompilationControllerPublic {
                                                 @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                 @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("GET api with params: pinned = {}, from = {}, size = {}", pinned, from, size);
-        return publicCompilationService.getCompilation(pinned, from, size);
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
+        return publicCompilationService.getCompilation(pinned, pageRequest);
     }
 
     @GetMapping("{compId}")

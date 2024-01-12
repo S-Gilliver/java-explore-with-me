@@ -1,5 +1,6 @@
 package ru.practicum.ewm.event.service;
 
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.event.dto.EventRequestStatusUpdateResult;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface PrivateEventService {
     EventFullDto postEvent(NewEventDto newEventDto, int userId);
 
-    List<EventShortDto> getUserEvents(int userId, int from, int size);
+    List<EventShortDto> getUserEvents(int userId, PageRequest pageRequest);
 
     EventFullDto getEventById(int userId, int eventId);
 

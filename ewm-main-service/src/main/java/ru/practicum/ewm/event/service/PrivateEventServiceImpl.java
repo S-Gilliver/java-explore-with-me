@@ -62,10 +62,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public List<EventShortDto> getUserEvents(int userId, int from, int size) {
-
-        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
-
+    public List<EventShortDto> getUserEvents(int userId, PageRequest pageRequest) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException(String.format("User with id=%d was not found", userId));
         }

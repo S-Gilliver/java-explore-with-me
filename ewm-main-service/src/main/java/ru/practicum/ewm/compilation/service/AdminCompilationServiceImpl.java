@@ -49,9 +49,14 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
 
         if (compilationDto.getEvents() != null && !compilationDto.getEvents().isEmpty()) {
             List<Event> events = eventRepository.findAllById(new ArrayList<>(compilationDto.getEvents()));
-            eventShortDtoList = events.stream().map(event -> EventMapper.createEventShortDto(event, requestRepository.countRequestByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED))).collect(Collectors.toList());
+            eventShortDtoList = events.stream().map(event -> EventMapper
+                    .createEventShortDto(event, requestRepository
+                            .countRequestByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED)))
+                    .collect(Collectors.toList());
+
             for (Integer eventId : compilationDto.getEvents()) {
-                eventCompilationConnectionRepository.save(new EventCompilationConnection(0, eventId, compilationFromDb.getId()));
+                eventCompilationConnectionRepository
+                        .save(new EventCompilationConnection(0, eventId, compilationFromDb.getId()));
             }
             return CompilationMapper.createCompilationDtoWithoutEventList(compilation, eventShortDtoList);
         }
@@ -73,7 +78,9 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     @Transactional(propagation = Propagation.REQUIRED)
     public CompilationDto patchCompilation(UpdateCompilationRequest updateCompilationRequest, int compilationId) {
 
-        Compilation compilationFromDb = compilationRepository.findById(compilationId).orElseThrow(() -> new NotFoundException(String.format("Compilation with id=%d was not found", compilationId)));
+        Compilation compilationFromDb = compilationRepository.findById(compilationId)
+                .orElseThrow(() ->
+                        new NotFoundException(String.format("Compilation with id=%d was not found", compilationId)));
 
         if (updateCompilationRequest.getTitle() != null && !updateCompilationRequest.getTitle().isBlank()) {
             compilationFromDb.setTitle(updateCompilationRequest.getTitle());
@@ -91,7 +98,9 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
             }
         }
 
-        return CompilationMapper.createCompilationDtoWithEventList(compilationRepository.save(compilationFromDb), requestRepository);
+        return CompilationMapper
+                .createCompilationDtoWithEventList(compilationRepository.save(compilationFromDb),
+                        requestRepository);
     }
 }
 

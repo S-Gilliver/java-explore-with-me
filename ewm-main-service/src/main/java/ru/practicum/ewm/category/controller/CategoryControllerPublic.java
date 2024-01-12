@@ -2,6 +2,7 @@ package ru.practicum.ewm.category.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +29,8 @@ public class CategoryControllerPublic {
     public List<CategoryDto> getCategories(@PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                            @Positive @RequestParam(defaultValue = "10") int size) {
         log.info("Get categories");
-        return publicCategoryService.getCategories(from, size);
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
+        return publicCategoryService.getCategories(pageRequest);
     }
 
     @GetMapping("/{catId}")
