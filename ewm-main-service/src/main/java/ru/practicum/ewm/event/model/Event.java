@@ -3,7 +3,9 @@ package ru.practicum.ewm.event.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.event.enums.EventState;
 import ru.practicum.ewm.user.model.User;
@@ -24,7 +26,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
