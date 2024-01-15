@@ -16,18 +16,18 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Entity
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "hits")
+@Builder
+@Entity
+@Table(name = "endpoint_hit")
 public class EndpointHit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
-    @Column(name = "app")
+    @Column(name = "app_name")
     private String app;
 
     @Column(name = "uri")
@@ -36,6 +36,6 @@ public class EndpointHit {
     @Column(name = "ip")
     private String ip;
 
-    @Column(name = "created")
-    private LocalDateTime created;
+    @Column(name = "hit_time")
+    private LocalDateTime timestamp;
 }
