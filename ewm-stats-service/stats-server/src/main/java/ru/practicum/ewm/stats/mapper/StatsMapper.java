@@ -12,7 +12,7 @@ public class StatsMapper {
 
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    public static EndpointHitDto createEndPointHitDto(EndpointHit endpointHit) {
+    public EndpointHitDto createEndPointHitDto(EndpointHit endpointHit) {
         return EndpointHitDto.builder()
                 .id(endpointHit.getId())
                 .app(endpointHit.getApp())
@@ -22,7 +22,7 @@ public class StatsMapper {
                 .build();
     }
 
-    public static EndpointHit createEndPointHit(EndpointHitDto endpointHitDto) {
+    public EndpointHit createEndPointHit(EndpointHitDto endpointHitDto) {
         return EndpointHit.builder()
                 .id(endpointHitDto.getId())
                 .app(endpointHitDto.getApp())

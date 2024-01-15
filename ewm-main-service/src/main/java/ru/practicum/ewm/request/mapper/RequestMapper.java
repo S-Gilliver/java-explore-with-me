@@ -18,7 +18,7 @@ public class RequestMapper {
 
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    public static Request createRequest(User requester, Event event) {
+    public Request createRequest(User requester, Event event) {
         Request request = Request.builder()
                 .requester(requester)
                 .created(LocalDateTime.now())
