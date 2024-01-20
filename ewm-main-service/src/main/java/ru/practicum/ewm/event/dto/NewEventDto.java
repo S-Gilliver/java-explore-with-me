@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.ewm.event.model.Location;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
@@ -20,15 +20,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 public class NewEventDto {
-    @NotEmpty
-    @NotNull
+    @NotBlank
     @Size(min = 20, message = "String too short")
     @Size(max = 2000, message = "String too long")
     private final String annotation;
     @Positive
     private final int category;
-    @NotEmpty
-    @NotNull
+    @NotBlank
     @Size(min = 20, message = "String too short")
     @Size(max = 7000, message = "String too long")
     private final String description;
@@ -40,8 +38,7 @@ public class NewEventDto {
     private Boolean paid = false;
     private int participantLimit = 0;
     private Boolean requestModeration = true;
-    @NotEmpty
-    @NotNull
+    @NotBlank
     @Size(min = 3, message = "String too short")
     @Size(max = 120, message = "String too long")
     private final String title;

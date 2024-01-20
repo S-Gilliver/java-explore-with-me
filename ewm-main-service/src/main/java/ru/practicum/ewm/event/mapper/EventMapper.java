@@ -12,6 +12,8 @@ import ru.practicum.ewm.user.mapper.UserMapper;
 import ru.practicum.ewm.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class EventMapper {
@@ -66,6 +68,9 @@ public class EventMapper {
                 .title(event.getTitle())
                 .views(event.getViews())
                 .publishedOn(event.getPublishedOn())
+                .comments((event.getComments() == null) ? new ArrayList<>() :
+                        event.getComments().stream()
+                                .map(CommentMapper::createCommentDto).collect(Collectors.toList()))
                 .build();
     }
 }
