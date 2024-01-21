@@ -92,8 +92,9 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (updateEventAdminRequest.getCategory() != null && updateEventAdminRequest.getCategory() !=
                 eventFromDb.getCategory().getId()) {
             Category category = categoryRepository.findById(updateEventAdminRequest.getCategory())
-                    .orElseThrow(() -> new NotFoundException
-                            (String.format("Category with id=%d was not found", updateEventAdminRequest.getCategory())));
+                    .orElseThrow(() ->
+                            new NotFoundException(String.format("Category with id=%d was not found",
+                                    updateEventAdminRequest.getCategory())));
             eventFromDb.setCategory(category);
         }
 
@@ -121,16 +122,17 @@ public class AdminEventServiceImpl implements AdminEventService {
             eventFromDb.setParticipantLimit(updateEventAdminRequest.getParticipantLimit());
         }
 
-        return EventMapper.createEventFullDto(eventRepository.save(eventFromDb)
-                , requestRepository.countRequestByEventIdAndStatus(eventFromDb.getId(),
+        return EventMapper.createEventFullDto(eventRepository.save(eventFromDb),
+                requestRepository.countRequestByEventIdAndStatus(eventFromDb.getId(),
                         RequestStatus.CONFIRMED));
 
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public List<EventFullDto> getEvents(List<Integer> usersIds, List<String> states
-            , List<Integer> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, PageRequest pageRequest) {
+    public List<EventFullDto> getEvents(List<Integer> usersIds, List<String> states,
+                                        List<Integer> categories, LocalDateTime rangeStart,
+                                        LocalDateTime rangeEnd, PageRequest pageRequest) {
 
         List<EventState> eventStates = null;
         if (rangeStart == null) {
