@@ -29,7 +29,8 @@ public class PublicCategoryServiceImpl implements PublicCategoryService {
 
     @Override
     public CategoryDto getCategoryById(int categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException(String.format("Category with id=%d was not found", categoryId)));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(()
+                -> new NotFoundException(String.format("Category with id=%d was not found", categoryId)));
         return CategoryMapper.createCategoryDto(category);
     }
 }
