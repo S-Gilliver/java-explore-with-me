@@ -42,7 +42,8 @@ public class AdminEventServiceImpl implements AdminEventService {
     @Transactional(propagation = Propagation.REQUIRED)
     public EventFullDto patchEvent(UpdateEventAdminRequest updateEventAdminRequest, int eventId) {
 
-        Event eventFromDb = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(String.format("Event with id=%d was not found", eventId)));
+        Event eventFromDb = eventRepository.findById(eventId).orElseThrow(()
+                -> new NotFoundException(String.format("Event with id=%d was not found", eventId)));
 
         if (updateEventAdminRequest.getStateAction() != null) {
             ModeratorEventState action = ModeratorEventState.valueOf(updateEventAdminRequest.getStateAction());
@@ -88,8 +89,12 @@ public class AdminEventServiceImpl implements AdminEventService {
             eventFromDb.setAnnotation(updateEventAdminRequest.getAnnotation());
         }
 
-        if (updateEventAdminRequest.getCategory() != null && updateEventAdminRequest.getCategory() != eventFromDb.getCategory().getId()) {
-            Category category = categoryRepository.findById(updateEventAdminRequest.getCategory()).orElseThrow(() -> new NotFoundException(String.format("Category with id=%d was not found", updateEventAdminRequest.getCategory())));
+        if (updateEventAdminRequest.getCategory() != null && updateEventAdminRequest.getCategory() !=
+                eventFromDb.getCategory().getId()) {
+            Category category = categoryRepository.findById(updateEventAdminRequest.getCategory())
+                    .orElseThrow(() ->
+                            new NotFoundException(String.format("Category with id=%d was not found",
+                                    updateEventAdminRequest.getCategory())));
             eventFromDb.setCategory(category);
         }
 
@@ -117,13 +122,17 @@ public class AdminEventServiceImpl implements AdminEventService {
             eventFromDb.setParticipantLimit(updateEventAdminRequest.getParticipantLimit());
         }
 
-        return EventMapper.createEventFullDto(eventRepository.save(eventFromDb), requestRepository.countRequestByEventIdAndStatus(eventFromDb.getId(), RequestStatus.CONFIRMED));
+        return EventMapper.createEventFullDto(eventRepository.save(eventFromDb),
+                requestRepository.countRequestByEventIdAndStatus(eventFromDb.getId(),
+                        RequestStatus.CONFIRMED));
 
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public List<EventFullDto> getEvents(List<Integer> usersIds, List<String> states, List<Integer> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, PageRequest pageRequest) {
+    public List<EventFullDto> getEvents(List<Integer> usersIds, List<String> states,
+                                        List<Integer> categories, LocalDateTime rangeStart,
+                                        LocalDateTime rangeEnd, PageRequest pageRequest) {
 
         List<EventState> eventStates = null;
         if (rangeStart == null) {

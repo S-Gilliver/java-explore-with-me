@@ -14,6 +14,7 @@ import ru.practicum.ewm.user.dto.UserShortDto;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -48,4 +49,5 @@ public class EventFullDto {
     @NotBlank
     private final String title;
     private final int views;
+    private List<CommentDto> comments;
 }

@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.repository.CategoryRepository;
+import ru.practicum.ewm.event.dto.CommentDto;
+import ru.practicum.ewm.event.dto.CommentRequest;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.event.dto.EventRequestStatusUpdateResult;
@@ -14,7 +16,9 @@ import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.dto.UpdateEventUserRequest;
 import ru.practicum.ewm.event.enums.EventState;
+import ru.practicum.ewm.event.mapper.CommentMapper;
 import ru.practicum.ewm.event.mapper.EventMapper;
+import ru.practicum.ewm.event.model.Comment;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.BadRequestException;
@@ -27,6 +31,7 @@ import ru.practicum.ewm.request.model.Request;
 import ru.practicum.ewm.request.repository.RequestRepository;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
+import ru.practicum.ewm.event.repository.CommentRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,6 +45,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final RequestRepository requestRepository;
+    private final CommentRepository commentRepository;
 
 
     @Override
@@ -220,5 +226,83 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         return RequestMapper.createEventRequestStatusUpdateResult(requestRepository.saveAll(requests));
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CommentDto postComment(CommentRequest commentRequest, int userId, int eventId) {
+
+        User userFromDb = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(String.format("User with id=%d was not found", userId)));
+        Event eventFromDb = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException(String.format("Event with id=%d was not found", eventId)));
+
+        if (!eventFromDb.getState().equals(EventState.PUBLISHED)) {
+            throw new ConflictException("You can comment only published events");
+        }
+
+        Comment comment = CommentMapper.createComment(commentRequest, eventFromDb, userFromDb);
+
+        return CommentMapper.createCommentDto(commentRepository.save(comment));
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CommentDto patchComment(CommentRequest commentRequest, int userId, int eventId, int commentId) {
+
+
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(String.format("User with id=%d was not found", userId));
+        }
+
+        if (!eventRepository.existsById(eventId)) {
+            throw new NotFoundException(String.format("Event with id=%d was not found", eventId));
+        }
+
+        Comment commentFromDb = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException(String.format("Comment with id=%d was not found", commentId)));
+
+        if (commentFromDb.getAuthor().getId() != userId) {
+            throw new ConflictException(String.format("User with id=%d is not the author of the comment with id=%d", userId, commentId));
+        }
+
+        if (commentRequest.getText() != null) {
+            commentFromDb.setText(commentRequest.getText());
+        }
+
+        return CommentMapper.createCommentDto(commentRepository.save(commentFromDb));
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void deleteComment(int userId, int eventId, int commentId) {
+
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(String.format("User with id=%d was not found", userId));
+        }
+
+        if (!eventRepository.existsById(eventId)) {
+            throw new NotFoundException(String.format("Event with id=%d was not found", eventId));
+        }
+
+        Comment commentFromDb = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException(String.format("Comment with id=%d was not found", commentId)));
+
+        if (commentFromDb.getAuthor().getId() != userId) {
+            throw new ConflictException(String.format("User with id=%d is not the author of the comment with id=%d", userId, commentId));
+        }
+
+        commentRepository.deleteById(commentId);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    public List<CommentDto> getComments(int userId, int eventId, PageRequest pageRequest) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(String.format("User with id=%d was not found", userId));
+        }
+
+        if (!eventRepository.existsById(eventId)) {
+            throw new NotFoundException(String.format("Event with id=%d was not found", eventId));
+        }
+
+        return commentRepository.findAll(pageRequest).stream()
+                .map(CommentMapper::createCommentDto)
+                .collect(Collectors.toList());
+    }
 }
 
