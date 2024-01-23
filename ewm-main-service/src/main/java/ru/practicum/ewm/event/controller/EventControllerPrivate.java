@@ -95,7 +95,7 @@ public class EventControllerPrivate {
     public CommentDto postComment(@RequestBody @Valid CommentRequest commentRequest,
                                   @PathVariable @PositiveOrZero int userId,
                                   @PathVariable @PositiveOrZero int eventId) {
-        log.debug("Вызван метод postComment");
+        log.debug("POST comment for event");
         return privateEventService.postComment(commentRequest, userId, eventId);
     }
 
@@ -104,7 +104,7 @@ public class EventControllerPrivate {
                                    @PathVariable @PositiveOrZero int userId,
                                    @PathVariable @PositiveOrZero int eventId,
                                    @PathVariable @PositiveOrZero int commentId) {
-        log.debug("Вызван метод patchRequests");
+        log.debug("PATCH comment for event");
         return privateEventService.patchComment(commentRequest, userId, eventId, commentId);
     }
 
@@ -113,7 +113,7 @@ public class EventControllerPrivate {
     public void deleteComment(@PathVariable @PositiveOrZero int userId,
                               @PathVariable @PositiveOrZero int eventId,
                               @PathVariable @PositiveOrZero int commentId) {
-        log.debug("Вызван метод deleteComment");
+        log.debug("DELETE comment for event");
         privateEventService.deleteComment(userId, eventId, commentId);
     }
 
@@ -122,7 +122,7 @@ public class EventControllerPrivate {
                                         @PathVariable @PositiveOrZero int eventId,
                                         @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                         @RequestParam(defaultValue = "10") @Positive int size) {
-        log.debug("Вызван метод getComments");
+        log.debug("GET comment for event");
         PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
         return privateEventService.getComments(userId, eventId, pageRequest);
     }
