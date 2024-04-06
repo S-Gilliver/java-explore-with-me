@@ -31,9 +31,7 @@ _______________________________________________________________
 ## Endpoints
 - [Main service API](./ewm-stats-service-spec.json)
 - [Statistics service API](./ewm-main-service-spec.json)
+- [Comment API](./postman/feature.json)
 
 ## DB schema of main api
 ![Screenshot](schema.png)
-
-### PR:
-https://github.com/S-Gilliver/java-explore-with-me/pull/4
