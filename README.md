@@ -36,4 +36,4 @@ _______________________________________________________________
 ![Screenshot](schema.png)
 
 ### PR:
-https://github.com/PriestSexist/java-explore-with-me/pull/4
+https://github.com/S-Gilliver/java-explore-with-me/pull/4
